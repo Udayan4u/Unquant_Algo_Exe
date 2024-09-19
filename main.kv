@@ -1,0 +1,1545 @@
+#:kivy 2.0.0
+#:import dp kivy.metrics.dp
+
+#:import SmoothedAnimation kivy.animation.Animation
+#:import get_color_from_hex kivy.utils.get_color_from_hex
+#:import MDDataTable kivymd.uix.datatables.MDDataTable
+#:import MDTopAppBar kivymd.uix.toolbar.MDTopAppBar
+
+<CustomLabel@MDLabel>:
+    font_name: 'Roboto'
+
+<CustomHeaderLabel@MDLabel>:
+    font_name: 'Roboto'
+    font_style: 'H5'
+
+<CustomTopAppBar@MDTopAppBar>:
+    elevation: 4
+    height: dp(48)  # Reduced height
+
+<MainScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        MDTopAppBar:
+            title: "Trading App"
+            elevation: 10
+            left_action_items: [['menu', lambda x: app.main_layout.ids.nav_drawer.set_state("open")]]
+        Widget:
+
+<DrawerList@OneLineIconListItem>:
+    icon: ""
+    IconLeftWidget:
+        icon: root.icon
+
+<ContentNavigationDrawer>:
+    orientation: "vertical"
+    padding: "8dp"
+    spacing: "8dp"
+
+    MDLabel:
+        text: "Select Broker"
+        font_style: "H6"
+        size_hint_y: None
+        height: self.texture_size[1]
+    
+    ScrollView:
+        MDList:
+            id: md_list
+
+<MenuButton@MDIconButton>:
+    icon: 'menu'
+    pos_hint: {"top": 1, "left": 1}
+    on_release: app.main_layout.ids.nav_drawer.set_state("open")
+
+
+
+<OTPDialog>:
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "120dp"
+
+    MDTextField:
+        id: otp_input
+        hint_text: "Enter 4-digit OTP"
+        helper_text: "Enter the 4-digit OTP sent to your mobile"
+        helper_text_mode: "on_focus"
+        input_filter: "int"
+        max_text_length: 4
+
+
+<BrokerSelectionScreen>:
+    MenuButton:
+
+
+
+
+<ZerodhaLoginScreen>:
+    status_label: status_label
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDTopAppBar:
+            title: "Zerodha Broker"
+            left_action_items: [["menu", lambda x: app.main_layout.ids.nav_drawer.set_state("open")]]
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: dp(20)
+            spacing: dp(20)
+            md_bg_color: app.theme_cls.bg_dark
+
+            MDCard:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(10)
+                elevation: 4
+
+                MDTextField:
+                    id: api_key
+                    hint_text: "API Key"
+                    helper_text: "Enter your API Key"
+                    helper_text_mode: "on_focus"
+                    size_hint_y: None
+                    height: dp(48)
+                    icon_right: "key-variant"
+
+                MDTextField:
+                    id: api_secret
+                    hint_text: "API Secret"
+                    helper_text: "Enter your API Secret"
+                    helper_text_mode: "on_focus"
+                    password: True
+                    size_hint_y: None
+                    height: dp(48)
+                    icon_right: "eye-off"
+
+                MDRaisedButton:
+                    text: "Login"
+                    on_release: root.initiate_login()
+                    size_hint_x: 1
+                    height: dp(48)
+                    md_bg_color: app.theme_cls.primary_color
+
+            CustomLabel:
+                id: status_label
+                text: ""
+                halign: "center"
+                theme_text_color: "Secondary"
+                size_hint_y: None
+                height: self.texture_size[1]
+
+
+
+<ZerodhaBrokerScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDTopAppBar:
+            title: "Zerodha Broker"
+            left_action_items: [["menu", lambda x: app.main_layout.ids.nav_drawer.set_state("open")]]
+
+        MDBottomNavigation:
+            id: bottom_nav
+            panel_color: app.theme_cls.primary_color
+
+            MDBottomNavigationItem:
+                name: 'zerodha_trading'
+                text: 'Trading'
+                icon: 'chart-line'
+                
+                ZerodhaTradingScreen:
+                    id: zerodha_trading_screen
+
+            MDBottomNavigationItem:
+                name: 'zerodha_strategy'
+                text: 'Strategy'
+                icon: 'strategy'
+                
+                ZerodhaStrategyScreen:
+                    id: zerodha_strategy_screen
+
+            MDBottomNavigationItem:
+                name: 'zerodha_trade_book'
+                text: 'Trade Book'
+                icon: 'book-open-variant'
+                
+                ZerodhaTradeBookScreen:
+                    id: zerodha_trade_book_screen
+
+
+
+
+<ZerodhaTradingScreen>:
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: "5dp"
+
+        ScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                spacing: dp(10)
+                padding: dp(10)
+                size_hint_y: None
+                height: self.minimum_height
+
+                # Top section with available funds and index selection
+                MDLabel:
+                    id: available_funds
+                    text: "Available Funds - "
+                    halign: "left"
+                    size_hint_y: None
+                    height: self.texture_size[1]
+
+
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: dp(40)
+                    spacing: dp(10)
+
+                    MDRaisedButton:
+                        id: index_button
+                        text: "Select Index"
+                        on_release: root.show_index_menu()
+    #                    size_hint: (0.5, 0.5)
+    #                    pos_hint: {'center_x':0.5}
+
+                    MDLabel:
+                        id: index_price
+                        text: "Index Price - "
+                        halign: "right"
+                        size_hint_x: 0.5
+
+                # Options section
+                MDGridLayout:
+                    cols: 2
+                    spacing: dp(10)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    # Call Option
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(5)
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        MDRaisedButton:
+                            id: call_option_button
+                            text: "Select Call Option"
+                            on_release: root.show_option_menu("Call")
+                            size_hint_x: 1
+                            md_bg_color: get_color_from_hex("#90EE90")  # Light green
+
+                        MDLabel:
+                            id: call_price
+                            text: "Call Price - "
+                            halign: "center"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDLabel:
+                            id: call_details
+                            text: ""
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: None
+                            height: dp(40)
+                            spacing: dp(5)
+
+                            MDIconButton:
+                                icon: "minus"
+                                on_release: root.decrement_lots('call')
+
+                            MDTextField:
+                                id: call_lots
+                                hint_text: "Lots"
+                                input_filter: "int"
+                                size_hint_x: 0.5
+
+                            MDIconButton:
+                                icon: "plus"
+                                on_release: root.increment_lots('call')
+
+                        MDLabel:
+                            id: call_fund_required
+                            text: "Fund Required - "
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            spacing: dp(10)
+                            size_hint_y: None
+                            height: dp(40)
+
+                            MDRaisedButton:
+                                id: call_buy_button
+                                text: "BUY"
+                                on_release: root.buy_sell_option('Call', 'LONG')
+                                md_bg_color: get_color_from_hex("#4CAF50")
+
+                            MDRaisedButton:
+                                id: call_sell_button
+                                text: "SELL"
+                                on_release: root.buy_sell_option('Call', 'SHORT')
+                                md_bg_color: get_color_from_hex("#F44336")
+
+                    # Put Option
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(5)
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        MDRaisedButton:
+                            id: put_option_button
+                            text: "Select Put Option"
+                            on_release: root.show_option_menu("Put")
+                            size_hint_x: 1
+                            md_bg_color: get_color_from_hex("#FFA07A")  # Light salmon (light red)
+
+                        MDLabel:
+                            id: put_price
+                            text: "Put Price - "
+                            halign: "center"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDLabel:
+                            id: put_details
+                            text: ""
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: None
+                            height: dp(40)
+                            spacing: dp(5)
+
+                            MDIconButton:
+                                icon: "minus"
+                                on_release: root.decrement_lots('put')
+
+                            MDTextField:
+                                id: put_lots
+                                hint_text: "Lots"
+                                input_filter: "int"
+                                size_hint_x: 0.5
+
+                            MDIconButton:
+                                icon: "plus"
+                                on_release: root.increment_lots('put')
+
+                        MDLabel:
+                            id: put_fund_required
+                            text: "Fund Required - "
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            spacing: dp(10)
+                            size_hint_y: None
+                            height: dp(40)
+
+                            MDRaisedButton:
+                                id: put_buy_button
+                                text: "BUY"
+                                on_release: root.buy_sell_option('Put', 'LONG')
+                                md_bg_color: get_color_from_hex("#4CAF50")
+
+                            MDRaisedButton:
+                                id: put_sell_button
+                                text: "SELL"
+                                on_release: root.buy_sell_option('Put', 'SHORT')
+                                md_bg_color: get_color_from_hex("#F44336")
+
+
+                # Positions section
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(5)
+                    padding: dp(5)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        spacing: dp(5)
+                        padding: dp(5)
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        # Top section with Position header and total PnL
+                        MDLabel:
+                            text: "Positions"
+                            halign: "left"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            font_size: 16
+                        MDFloatingActionButton:
+                            icon: "refresh"
+                            md_bg_color: app.theme_cls.primary_color
+                            user_font_size: "18sp"
+                            pos_hint: {"center_y": .5}
+                            on_release: root.refresh_data()
+                        MDLabel:
+                            id: Total_PnL
+                            text: "Profit: -"
+                            halign: "right"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            font_size: 16
+
+                    ScrollView:
+                        size_hint_y: None
+                        height: dp(400)  # Adjust this value as needed
+
+                        MDBoxLayout:
+                            id: positions_container
+                            orientation: 'vertical'
+                            size_hint_y: None
+                            height: dp(400)  # Should match the height set in create_positions_table
+
+
+<ZerodhaTradeBookScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        padding: dp(10)
+        spacing: dp(5)
+        md_bg_color: app.theme_cls.bg_dark
+
+        MDTopAppBar:
+            title: "Trade Book"
+            elevation: 4
+            right_action_items: [["refresh", lambda x: root.refresh_data()]]
+
+        MDLabel:
+            text: "Recent Trades"
+            font_style: 'H6'
+            size_hint_y: None
+            height: dp(40)
+            halign: 'center'
+
+        ScrollView:
+            do_scroll_x: True
+            do_scroll_y: True
+            size_hint: (1, 1)
+            
+            MDBoxLayout:
+                id: tradebook_container
+                orientation: 'vertical'
+                size_hint: (None, None)
+                size: self.minimum_size
+                height: self.minimum_height
+                width: self.minimum_width
+
+
+<ZerodhaStrategyScreen>:
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: dp(5)
+        padding: dp(5)
+
+        MDLabel:
+            id: connection_status
+            text: "Not connected to strategy server"
+            size_hint_y: None
+            height: dp(30)
+
+        MDGridLayout:
+            cols: 3
+            spacing: dp(10)
+            size_hint_y: None
+            height: dp(50)
+
+            MDRectangleFlatButton:
+                id: index_button
+                text: "Select Index"
+                size_hint_x: 1
+                theme_text_color: "Custom"
+                text_color: "white"
+                line_color: "red"
+                on_release: root.show_index_menu(self)
+
+            MDRectangleFlatButton:
+                id: timeframe_button
+                text: "Select Timeframe"
+                size_hint_x: 1
+                theme_text_color: "Custom"
+                text_color: "white"
+                line_color: "red"
+                on_release: root.show_timeframe_menu(self)
+
+            MDRectangleFlatButton:
+                id: strategy_button
+                text: "Select Strategy"
+                size_hint_x: 1
+                theme_text_color: "Custom"
+                text_color: "white"
+                line_color: "red"
+                on_release: root.show_strategy_menu(self)
+
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: dp(50)
+            spacing: dp(10)
+
+            MDTextField:
+                id: fund
+                hint_text: "Fund for Strategy"
+                input_filter: "float"
+                size_hint_x: 0.4
+
+            MDRaisedButton:
+                id: start_strategy_button
+                text: "Start Strategy"
+                size_hint_x: 0.3
+                on_release: root.start_strategy()
+
+            MDRaisedButton:
+                id: stop_strategy_button
+                text: "Stop Strategy"
+                size_hint_x: 0.3
+                on_release: root.stop_strategy()
+
+        MDLabel:
+            text: "Active Strategies"
+            font_style: 'H6'
+            size_hint_y: None
+            height: dp(40)
+
+        MDBoxLayout:
+            id: strategy_table_container
+            size_hint_y: None
+            height: dp(300)  # Adjust as needed
+
+        MDLabel:
+            id: strategy_status
+            text: "Strategy Status: Idle"
+            size_hint_y: None
+            height: dp(30)
+
+        MDRaisedButton:
+            text: "Stop All"
+            size_hint_x: 0.3
+            pos_hint: {'center_x': 0.5}
+            on_release: root.stop_all_strategies()
+
+
+
+
+
+
+
+
+
+
+<ShoonyaLoginScreen>:
+    status_label: status_label
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDTopAppBar:
+            title: "Shoonya Broker"
+            left_action_items: [["menu", lambda x: app.main_layout.ids.nav_drawer.set_state("open")]]
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: dp(20)
+            spacing: dp(20)
+            md_bg_color: app.theme_cls.bg_dark
+
+            MDCard:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(10)
+                elevation: 4
+
+                MDTextField:
+                    id: user_id
+                    hint_text: "User Id"
+                    helper_text: "Enter your Shoonya User ID"
+                    helper_text_mode: "on_focus"
+                    size_hint_y: None
+                    height: dp(48)
+                    icon_right: "key-variant"
+
+                MDTextField:
+                    id: password
+                    hint_text: "Password"
+                    helper_text: "Enter your Login Password"
+                    helper_text_mode: "on_focus"
+                    password: True
+                    size_hint_y: None
+                    height: dp(48)
+                    icon_right: "lock"
+
+                MDTextField:
+                    id: vendor_code
+                    hint_text: "Vendor Code"
+                    helper_text: "Enter Vendor Code from API"
+                    helper_text_mode: "on_focus"
+                    size_hint_y: None
+                    height: dp(48)
+                    icon_right: "eye-off"
+
+
+                MDTextField:
+                    id: api_key
+                    hint_text: "API Key"
+                    helper_text: "Enter your API Key"
+                    helper_text_mode: "on_focus"
+                    password: True
+                    size_hint_y: None
+                    height: dp(48)
+                    icon_right: "key-variant"
+
+                MDTextField:
+                    id: imei
+                    hint_text: "IMEI"
+                    helper_text: "Enter your IMEI from API"
+                    helper_text_mode: "on_focus"
+                    password: True
+                    size_hint_y: None
+                    height: dp(48)
+                    icon_right: "eye-off"
+
+                MDRaisedButton:
+                    text: "Login"
+                    on_release: root.initiate_login()
+                    size_hint_x: 1
+                    height: dp(48)
+                    md_bg_color: app.theme_cls.primary_color
+
+            CustomLabel:
+                id: status_label
+                text: ""
+                halign: "center"
+                theme_text_color: "Secondary"
+                size_hint_y: None
+                height: self.texture_size[1]
+
+
+
+<ShoonyaBrokerScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDTopAppBar:
+            title: "Shoonya Broker"
+            left_action_items: [["menu", lambda x: app.main_layout.ids.nav_drawer.set_state("open")]]
+
+        MDBottomNavigation:
+            id: bottom_nav
+            panel_color: app.theme_cls.primary_color
+
+            MDBottomNavigationItem:
+                name: 'shoonya_trading'
+                text: 'Trading'
+                icon: 'chart-line'
+                
+                ShoonyaTradingScreen:
+                    id: shoonya_trading_screen
+
+            MDBottomNavigationItem:
+                name: 'shoonya_strategy'
+                text: 'Strategy'
+                icon: 'strategy'
+                
+                ShoonyaStrategyScreen:
+                    id: shoonya_strategy_screen
+
+            MDBottomNavigationItem:
+                name: 'shoonya_trade_book'
+                text: 'Trade Book'
+                icon: 'book-open-variant'
+                
+                ShoonyaTradeBookScreen:
+                    id: shoonya_trade_book_screen
+
+
+
+
+<ShoonyaTradingScreen>:
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: "5dp"
+
+        ScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                spacing: dp(10)
+                padding: dp(10)
+                size_hint_y: None
+                height: self.minimum_height
+
+                # Top section with available funds and index selection
+                MDLabel:
+                    id: available_funds
+                    text: "Available Funds - "
+                    halign: "left"
+                    size_hint_y: None
+                    height: self.texture_size[1]
+
+
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: dp(40)
+                    spacing: dp(10)
+
+                    MDRaisedButton:
+                        id: index_button
+                        text: "Select Index"
+                        on_release: root.show_index_menu()
+    #                    size_hint: (0.5, 0.5)
+    #                    pos_hint: {'center_x':0.5}
+
+                    MDLabel:
+                        id: index_price
+                        text: "Index Price - "
+                        halign: "right"
+                        size_hint_x: 0.5
+
+                # Options section
+                MDGridLayout:
+                    cols: 2
+                    spacing: dp(10)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    # Call Option
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(5)
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        MDRaisedButton:
+                            id: call_option_button
+                            text: "Select Call Option"
+                            on_release: root.show_option_menu("Call")
+                            size_hint_x: 1
+                            md_bg_color: get_color_from_hex("#90EE90")  # Light green
+
+                        MDLabel:
+                            id: call_price
+                            text: "Call Price - "
+                            halign: "center"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDLabel:
+                            id: call_details
+                            text: ""
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: None
+                            height: dp(40)
+                            spacing: dp(5)
+
+                            MDIconButton:
+                                icon: "minus"
+                                on_release: root.decrement_lots('call')
+
+                            MDTextField:
+                                id: call_lots
+                                hint_text: "Lots"
+                                input_filter: "int"
+                                size_hint_x: 0.5
+
+                            MDIconButton:
+                                icon: "plus"
+                                on_release: root.increment_lots('call')
+
+                        MDLabel:
+                            id: call_fund_required
+                            text: "Fund Required - "
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            spacing: dp(10)
+                            size_hint_y: None
+                            height: dp(40)
+
+                            MDRaisedButton:
+                                id: call_buy_button
+                                text: "BUY"
+                                on_release: root.buy_sell_option('Call', 'LONG')
+                                md_bg_color: get_color_from_hex("#4CAF50")
+
+                            MDRaisedButton:
+                                id: call_sell_button
+                                text: "SELL"
+                                on_release: root.buy_sell_option('Call', 'SHORT')
+                                md_bg_color: get_color_from_hex("#F44336")
+
+                    # Put Option
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(5)
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        MDRaisedButton:
+                            id: put_option_button
+                            text: "Select Put Option"
+                            on_release: root.show_option_menu("Put")
+                            size_hint_x: 1
+                            md_bg_color: get_color_from_hex("#FFA07A")  # Light salmon (light red)
+
+                        MDLabel:
+                            id: put_price
+                            text: "Put Price - "
+                            halign: "center"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDLabel:
+                            id: put_details
+                            text: ""
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: None
+                            height: dp(40)
+                            spacing: dp(5)
+
+                            MDIconButton:
+                                icon: "minus"
+                                on_release: root.decrement_lots('put')
+
+                            MDTextField:
+                                id: put_lots
+                                hint_text: "Lots"
+                                input_filter: "int"
+                                size_hint_x: 0.5
+
+                            MDIconButton:
+                                icon: "plus"
+                                on_release: root.increment_lots('put')
+
+                        MDLabel:
+                            id: put_fund_required
+                            text: "Fund Required - "
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            spacing: dp(10)
+                            size_hint_y: None
+                            height: dp(40)
+
+                            MDRaisedButton:
+                                id: put_buy_button
+                                text: "BUY"
+                                on_release: root.buy_sell_option('Put', 'LONG')
+                                md_bg_color: get_color_from_hex("#4CAF50")
+
+                            MDRaisedButton:
+                                id: put_sell_button
+                                text: "SELL"
+                                on_release: root.buy_sell_option('Put', 'SHORT')
+                                md_bg_color: get_color_from_hex("#F44336")
+
+
+                # Positions section
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(5)
+                    padding: dp(5)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        spacing: dp(5)
+                        padding: dp(5)
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        # Top section with Position header and total PnL
+                        MDLabel:
+                            text: "Positions"
+                            halign: "left"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            font_size: 16
+                        MDFloatingActionButton:
+                            icon: "refresh"
+                            md_bg_color: app.theme_cls.primary_color
+                            user_font_size: "18sp"
+                            pos_hint: {"center_y": .5}
+                            on_release: root.refresh_data()
+                        MDLabel:
+                            id: Total_PnL
+                            text: "Profit: -"
+                            halign: "right"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            font_size: 16
+
+                    ScrollView:
+                        size_hint_y: None
+                        height: dp(400)  # Adjust this value as needed
+
+                        MDBoxLayout:
+                            id: positions_container
+                            orientation: 'vertical'
+                            size_hint_y: None
+                            height: self.minimum_height
+
+
+
+<ShoonyaTradeBookScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        padding: dp(10)
+        spacing: dp(5)
+        md_bg_color: app.theme_cls.bg_dark
+
+        MDTopAppBar:
+            title: "Trade Book"
+            elevation: 4
+            right_action_items: [["refresh", lambda x: root.refresh_data()]]
+
+        MDLabel:
+            text: "Recent Trades"
+            font_style: 'H6'
+            size_hint_y: None
+            height: dp(40)
+            halign: 'center'
+
+        ScrollView:
+            do_scroll_x: True
+            do_scroll_y: True
+            size_hint: (1, 1)
+            
+            MDBoxLayout:
+                id: tradebook_container
+                orientation: 'vertical'
+                size_hint: (None, None)
+                size: self.minimum_size
+                height: self.minimum_height
+                width: self.minimum_width
+
+
+<ShoonyaStrategyScreen>:
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: dp(5)
+        padding: dp(5)
+
+        MDLabel:
+            id: connection_status
+            text: "Not connected to strategy server"
+            size_hint_y: None
+            height: dp(30)
+
+        MDGridLayout:
+            cols: 3
+            spacing: dp(10)
+            size_hint_y: None
+            height: dp(50)
+
+            MDRectangleFlatButton:
+                id: index_button
+                text: "Select Index"
+                size_hint_x: 1
+                theme_text_color: "Custom"
+                text_color: "white"
+                line_color: "red"
+                on_release: root.show_index_menu(self)
+
+            MDRectangleFlatButton:
+                id: timeframe_button
+                text: "Select Timeframe"
+                size_hint_x: 1
+                theme_text_color: "Custom"
+                text_color: "white"
+                line_color: "red"
+                on_release: root.show_timeframe_menu(self)
+
+            MDRectangleFlatButton:
+                id: strategy_button
+                text: "Select Strategy"
+                size_hint_x: 1
+                theme_text_color: "Custom"
+                text_color: "white"
+                line_color: "red"
+                on_release: root.show_strategy_menu(self)
+
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: dp(50)
+            spacing: dp(10)
+
+            MDTextField:
+                id: fund
+                hint_text: "Fund for Strategy"
+                input_filter: "float"
+                size_hint_x: 0.4
+
+            MDRaisedButton:
+                id: start_strategy_button
+                text: "Start Strategy"
+                size_hint_x: 0.3
+                on_release: root.start_strategy()
+
+            MDRaisedButton:
+                id: stop_strategy_button
+                text: "Stop Strategy"
+                size_hint_x: 0.3
+                on_release: root.stop_strategy()
+
+        MDLabel:
+            text: "Active Strategies"
+            font_style: 'H6'
+            size_hint_y: None
+            height: dp(40)
+
+        MDBoxLayout:
+            id: strategy_table_container
+            size_hint_y: None
+            height: dp(300)  # Adjust as needed
+
+        MDLabel:
+            id: strategy_status
+            text: "Strategy Status: Idle"
+            size_hint_y: None
+            height: dp(30)
+
+        MDRaisedButton:
+            text: "Stop All"
+            size_hint_x: 0.3
+            pos_hint: {'center_x': 0.5}
+            on_release: root.stop_all_strategies()
+
+
+
+
+
+
+
+
+
+
+
+
+<FlatTradeLoginScreen>:
+    status_label: status_label
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDTopAppBar:
+            title: "FlatTrade Broker"
+            left_action_items: [["menu", lambda x: app.main_layout.ids.nav_drawer.set_state("open")]]
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: dp(20)
+            spacing: dp(20)
+            md_bg_color: app.theme_cls.bg_dark
+
+            MDCard:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(10)
+                elevation: 4
+
+                MDTextField:
+                    id: user_id
+                    hint_text: "User Id"
+                    helper_text: "Enter your FlatTrade User ID"
+                    helper_text_mode: "on_focus"
+                    size_hint_y: None
+                    height: dp(48)
+                    icon_right: "key-variant"
+
+                MDTextField:
+                    id: api_key
+                    hint_text: "API Key"
+                    helper_text: "Enter your API Key"
+                    helper_text_mode: "on_focus"
+                    password: True
+                    size_hint_y: None
+                    height: dp(48)
+                    icon_right: "key-variant"
+
+                MDTextField:
+                    id: api_secret
+                    hint_text: "API Secret"
+                    helper_text: "Enter your API Secret from API"
+                    helper_text_mode: "on_focus"
+                    password: True
+                    size_hint_y: None
+                    height: dp(48)
+                    icon_right: "eye-off"
+
+                MDRaisedButton:
+                    text: "Login"
+                    on_release: root.initiate_login()
+                    size_hint_x: 1
+                    height: dp(48)
+                    md_bg_color: app.theme_cls.primary_color
+
+            CustomLabel:
+                id: status_label
+                text: ""
+                halign: "center"
+                theme_text_color: "Secondary"
+                size_hint_y: None
+                height: self.texture_size[1]
+
+
+
+<FlatTradeBrokerScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        MDTopAppBar:
+            title: "FlatTrade Broker"
+            left_action_items: [["menu", lambda x: app.main_layout.ids.nav_drawer.set_state("open")]]
+
+        MDBottomNavigation:
+            id: bottom_nav
+            panel_color: app.theme_cls.primary_color
+
+            MDBottomNavigationItem:
+                name: 'flattrade_trading'
+                text: 'Trading'
+                icon: 'chart-line'
+                
+                FlatTradeTradingScreen:
+                    id: flattrade_trading_screen
+
+            MDBottomNavigationItem:
+                name: 'flattrade_strategy'
+                text: 'Strategy'
+                icon: 'strategy'
+                
+                FlatTradeStrategyScreen:
+                    id: flattrade_strategy_screen
+
+            MDBottomNavigationItem:
+                name: 'flattrade_trade_book'
+                text: 'Trade Book'
+                icon: 'book-open-variant'
+                
+                FlatTradeTradeBookScreen:
+                    id: flattrade_trade_book_screen
+
+
+
+
+<FlatTradeTradingScreen>:
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: "5dp"
+
+        ScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                spacing: dp(10)
+                padding: dp(10)
+                size_hint_y: None
+                height: self.minimum_height
+
+                # Top section with available funds and index selection
+                MDLabel:
+                    id: available_funds
+                    text: "Available Funds - "
+                    halign: "left"
+                    size_hint_y: None
+                    height: self.texture_size[1]
+
+
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: dp(40)
+                    spacing: dp(10)
+
+                    MDRaisedButton:
+                        id: index_button
+                        text: "Select Index"
+                        on_release: root.show_index_menu()
+    #                    size_hint: (0.5, 0.5)
+    #                    pos_hint: {'center_x':0.5}
+
+                    MDLabel:
+                        id: index_price
+                        text: "Index Price - "
+                        halign: "right"
+                        size_hint_x: 0.5
+
+                # Options section
+                MDGridLayout:
+                    cols: 2
+                    spacing: dp(10)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    # Call Option
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(5)
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        MDRaisedButton:
+                            id: call_option_button
+                            text: "Select Call Option"
+                            on_release: root.show_option_menu("Call")
+                            size_hint_x: 1
+                            md_bg_color: get_color_from_hex("#90EE90")  # Light green
+
+                        MDLabel:
+                            id: call_price
+                            text: "Call Price - "
+                            halign: "center"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDLabel:
+                            id: call_details
+                            text: ""
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: None
+                            height: dp(40)
+                            spacing: dp(5)
+
+                            MDIconButton:
+                                icon: "minus"
+                                on_release: root.decrement_lots('call')
+
+                            MDTextField:
+                                id: call_lots
+                                hint_text: "Lots"
+                                input_filter: "int"
+                                size_hint_x: 0.5
+
+                            MDIconButton:
+                                icon: "plus"
+                                on_release: root.increment_lots('call')
+
+                        MDLabel:
+                            id: call_fund_required
+                            text: "Fund Required - "
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            spacing: dp(10)
+                            size_hint_y: None
+                            height: dp(40)
+
+                            MDRaisedButton:
+                                id: call_buy_button
+                                text: "BUY"
+                                on_release: root.buy_sell_option('Call', 'LONG')
+                                md_bg_color: get_color_from_hex("#4CAF50")
+
+                            MDRaisedButton:
+                                id: call_sell_button
+                                text: "SELL"
+                                on_release: root.buy_sell_option('Call', 'SHORT')
+                                md_bg_color: get_color_from_hex("#F44336")
+
+                    # Put Option
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(5)
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        MDRaisedButton:
+                            id: put_option_button
+                            text: "Select Put Option"
+                            on_release: root.show_option_menu("Put")
+                            size_hint_x: 1
+                            md_bg_color: get_color_from_hex("#FFA07A")  # Light salmon (light red)
+
+                        MDLabel:
+                            id: put_price
+                            text: "Put Price - "
+                            halign: "center"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDLabel:
+                            id: put_details
+                            text: ""
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: None
+                            height: dp(40)
+                            spacing: dp(5)
+
+                            MDIconButton:
+                                icon: "minus"
+                                on_release: root.decrement_lots('put')
+
+                            MDTextField:
+                                id: put_lots
+                                hint_text: "Lots"
+                                input_filter: "int"
+                                size_hint_x: 0.5
+
+                            MDIconButton:
+                                icon: "plus"
+                                on_release: root.increment_lots('put')
+
+                        MDLabel:
+                            id: put_fund_required
+                            text: "Fund Required - "
+                            halign: "center"
+                            font_size: '12sp'
+                            size_hint_y: None
+                            height: self.texture_size[1]
+
+                        MDBoxLayout:
+                            orientation: 'horizontal'
+                            spacing: dp(10)
+                            size_hint_y: None
+                            height: dp(40)
+
+                            MDRaisedButton:
+                                id: put_buy_button
+                                text: "BUY"
+                                on_release: root.buy_sell_option('Put', 'LONG')
+                                md_bg_color: get_color_from_hex("#4CAF50")
+
+                            MDRaisedButton:
+                                id: put_sell_button
+                                text: "SELL"
+                                on_release: root.buy_sell_option('Put', 'SHORT')
+                                md_bg_color: get_color_from_hex("#F44336")
+
+
+                # Positions section
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(5)
+                    padding: dp(5)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        spacing: dp(5)
+                        padding: dp(5)
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        # Top section with Position header and total PnL
+                        MDLabel:
+                            text: "Positions"
+                            halign: "left"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            font_size: 16
+                        MDFloatingActionButton:
+                            icon: "refresh"
+                            md_bg_color: app.theme_cls.primary_color
+                            user_font_size: "18sp"
+                            pos_hint: {"center_y": .5}
+                            on_release: root.refresh_data()
+                        MDLabel:
+                            id: Total_PnL
+                            text: "Profit: -"
+                            halign: "right"
+                            size_hint_y: None
+                            height: self.texture_size[1]
+                            font_size: 16
+
+                    ScrollView:
+                        size_hint_y: None
+                        height: dp(400)  # Adjust this value as needed
+
+                        MDBoxLayout:
+                            id: positions_container
+                            orientation: 'vertical'
+                            size_hint_y: None
+                            height: dp(400)  # Should match the height set in create_positions_table
+
+
+<FlatTradeTradeBookScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        padding: dp(10)
+        spacing: dp(5)
+        md_bg_color: app.theme_cls.bg_dark
+
+        MDTopAppBar:
+            title: "Trade Book"
+            elevation: 4
+            right_action_items: [["refresh", lambda x: root.refresh_data()]]
+
+        MDLabel:
+            text: "Recent Trades"
+            font_style: 'H6'
+            size_hint_y: None
+            height: dp(40)
+            halign: 'center'
+
+        ScrollView:
+            do_scroll_x: True
+            do_scroll_y: True
+            size_hint: (1, 1)
+            
+            MDBoxLayout:
+                id: tradebook_container
+                orientation: 'vertical'
+                size_hint: (None, None)
+                size: self.minimum_size
+                height: self.minimum_height
+                width: self.minimum_width
+
+
+<FlatTradeStrategyScreen>:
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: dp(5)
+        padding: dp(5)
+
+        MDLabel:
+            id: connection_status
+            text: "Not connected to strategy server"
+            size_hint_y: None
+            height: dp(30)
+
+        MDGridLayout:
+            cols: 3
+            spacing: dp(10)
+            size_hint_y: None
+            height: dp(50)
+
+            MDRectangleFlatButton:
+                id: index_button
+                text: "Select Index"
+                size_hint_x: 1
+                theme_text_color: "Custom"
+                text_color: "white"
+                line_color: "red"
+                on_release: root.show_index_menu(self)
+
+            MDRectangleFlatButton:
+                id: timeframe_button
+                text: "Select Timeframe"
+                size_hint_x: 1
+                theme_text_color: "Custom"
+                text_color: "white"
+                line_color: "red"
+                on_release: root.show_timeframe_menu(self)
+
+            MDRectangleFlatButton:
+                id: strategy_button
+                text: "Select Strategy"
+                size_hint_x: 1
+                theme_text_color: "Custom"
+                text_color: "white"
+                line_color: "red"
+                on_release: root.show_strategy_menu(self)
+
+        MDBoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: dp(50)
+            spacing: dp(10)
+
+            MDTextField:
+                id: fund
+                hint_text: "Fund for Strategy"
+                input_filter: "float"
+                size_hint_x: 0.4
+
+            MDRaisedButton:
+                id: start_strategy_button
+                text: "Start Strategy"
+                size_hint_x: 0.3
+                on_release: root.start_strategy()
+
+            MDRaisedButton:
+                id: stop_strategy_button
+                text: "Stop Strategy"
+                size_hint_x: 0.3
+                on_release: root.stop_strategy()
+
+        MDLabel:
+            text: "Active Strategies"
+            font_style: 'H6'
+            size_hint_y: None
+            height: dp(40)
+
+        MDBoxLayout:
+            id: strategy_table_container
+            size_hint_y: None
+            height: dp(300)  # Adjust as needed
+
+        MDLabel:
+            id: strategy_status
+            text: "Strategy Status: Idle"
+            size_hint_y: None
+            height: dp(30)
+
+        MDRaisedButton:
+            text: "Stop All"
+            size_hint_x: 0.3
+            pos_hint: {'center_x': 0.5}
+            on_release: root.stop_all_strategies()
+
+
+
+
+
+
+
+
