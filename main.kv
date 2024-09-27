@@ -413,97 +413,136 @@
 
 <ZerodhaStrategyScreen>:
 
-    MDBoxLayout:
-        orientation: 'vertical'
-        spacing: dp(5)
-        padding: dp(5)
-
-        MDLabel:
-            id: connection_status
-            text: "Not connected to strategy server"
-            size_hint_y: None
-            height: dp(30)
-
-        MDGridLayout:
-            cols: 3
-            spacing: dp(10)
-            size_hint_y: None
-            height: dp(50)
-
-            MDRectangleFlatButton:
-                id: index_button
-                text: "Select Index"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_index_menu(self)
-
-            MDRectangleFlatButton:
-                id: timeframe_button
-                text: "Select Timeframe"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_timeframe_menu(self)
-
-            MDRectangleFlatButton:
-                id: strategy_button
-                text: "Select Strategy"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_strategy_menu(self)
-
+    ScrollView:
         MDBoxLayout:
-            orientation: 'horizontal'
-            size_hint_y: None
-            height: dp(50)
-            spacing: dp(10)
+            orientation: 'vertical'
+            spacing: dp(5)
+            padding: dp(5)
 
-            MDTextField:
-                id: fund
-                hint_text: "Fund for Strategy"
-                input_filter: "float"
-                size_hint_x: 0.4
+            MDLabel:
+                id: connection_status
+                text: "Not connected to strategy server"
+                size_hint_y: None
+                height: dp(30)
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(10)
+                size_hint_y: None
+                height: dp(60)
+
+                MDRectangleFlatButton:
+                    id: index_button
+                    text: "Select Index"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_index_menu(self)
+
+                MDRectangleFlatButton:
+                    id: timeframe_button
+                    text: "Select Timeframe"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_timeframe_menu(self)
+
+                MDRectangleFlatButton:
+                    id: strategy_button
+                    text: "Select Strategy"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_strategy_menu(self)
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: dp(60)
+                spacing: dp(10)
+
+                MDTextField:
+                    id: fund
+                    hint_text: "Fund for Strategy"
+                    input_filter: "float"
+                    size_hint_x: 0.4
+
+                MDRaisedButton:
+                    id: start_strategy_button
+                    text: "Start Strategy"
+                    size_hint_x: 0.3
+                    on_release: root.start_strategy()
+
+                MDRaisedButton:
+                    id: stop_strategy_button
+                    text: "Stop Strategy"
+                    size_hint_x: 0.3
+                    on_release: root.stop_strategy()
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: dp(60)
+                spacing: dp(10)
+
+                MDTextField:
+                    id: day_profit_target
+                    hint_text: "Day Profit Target"
+                    input_filter: "float"
+                    size_hint_x: 0.5
+
+                MDTextField:
+                    id: day_max_loss
+                    hint_text: "Day Maximum Loss"
+                    helper_text: "Enter a positive value"
+                    helper_text_mode: "on_focus"
+                    input_filter: "float"
+                    size_hint_x: 0.5
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                spacing: dp(5)
+                padding: dp(5)
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDLabel:
+                    text: "Active Strategies"
+                    halign: "left"
+                    height: self.texture_size[1]
+                    font_size: '16sp'
+
+                MDLabel:
+                    id: strategy_pnl
+                    text: "Total Profit: "
+                    halign: "right"
+                    height: self.texture_size[1]
+                    font_size: '16sp'
+
+            ScrollView:
+                size_hint_y: None
+                height: root.height * 0.4  # 40% of the screen height
+
+                MDBoxLayout:
+                    id: strategy_table_container
+                    size_hint_y: None
+        #            height: dp(300)  # Adjust as needed
+                    height: self.minimum_height
+
+            MDLabel:
+                id: strategy_status
+                text: "Strategy Status: Idle"
+                size_hint_y: None
+                height: dp(30)
 
             MDRaisedButton:
-                id: start_strategy_button
-                text: "Start Strategy"
+                text: "Stop All"
                 size_hint_x: 0.3
-                on_release: root.start_strategy()
-
-            MDRaisedButton:
-                id: stop_strategy_button
-                text: "Stop Strategy"
-                size_hint_x: 0.3
-                on_release: root.stop_strategy()
-
-        MDLabel:
-            text: "Active Strategies"
-            font_style: 'H6'
-            size_hint_y: None
-            height: dp(40)
-
-        MDBoxLayout:
-            id: strategy_table_container
-            size_hint_y: None
-            height: dp(300)  # Adjust as needed
-
-        MDLabel:
-            id: strategy_status
-            text: "Strategy Status: Idle"
-            size_hint_y: None
-            height: dp(30)
-
-        MDRaisedButton:
-            text: "Stop All"
-            size_hint_x: 0.3
-            pos_hint: {'center_x': 0.5}
-            on_release: root.stop_all_strategies()
-
+                pos_hint: {'center_x': 0.5}
+                on_release: root.stop_all_strategies()
 
 
 
@@ -883,97 +922,136 @@
 
 <ShoonyaStrategyScreen>:
 
-    MDBoxLayout:
-        orientation: 'vertical'
-        spacing: dp(5)
-        padding: dp(5)
-
-        MDLabel:
-            id: connection_status
-            text: "Not connected to strategy server"
-            size_hint_y: None
-            height: dp(30)
-
-        MDGridLayout:
-            cols: 3
-            spacing: dp(10)
-            size_hint_y: None
-            height: dp(50)
-
-            MDRectangleFlatButton:
-                id: index_button
-                text: "Select Index"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_index_menu(self)
-
-            MDRectangleFlatButton:
-                id: timeframe_button
-                text: "Select Timeframe"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_timeframe_menu(self)
-
-            MDRectangleFlatButton:
-                id: strategy_button
-                text: "Select Strategy"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_strategy_menu(self)
-
+    ScrollView:
         MDBoxLayout:
-            orientation: 'horizontal'
-            size_hint_y: None
-            height: dp(50)
-            spacing: dp(10)
+            orientation: 'vertical'
+            spacing: dp(5)
+            padding: dp(5)
 
-            MDTextField:
-                id: fund
-                hint_text: "Fund for Strategy"
-                input_filter: "float"
-                size_hint_x: 0.4
+            MDLabel:
+                id: connection_status
+                text: "Not connected to strategy server"
+                size_hint_y: None
+                height: dp(30)
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(10)
+                size_hint_y: None
+                height: dp(60)
+
+                MDRectangleFlatButton:
+                    id: index_button
+                    text: "Select Index"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_index_menu(self)
+
+                MDRectangleFlatButton:
+                    id: timeframe_button
+                    text: "Select Timeframe"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_timeframe_menu(self)
+
+                MDRectangleFlatButton:
+                    id: strategy_button
+                    text: "Select Strategy"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_strategy_menu(self)
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: dp(60)
+                spacing: dp(10)
+
+                MDTextField:
+                    id: fund
+                    hint_text: "Fund for Strategy"
+                    input_filter: "float"
+                    size_hint_x: 0.4
+
+                MDRaisedButton:
+                    id: start_strategy_button
+                    text: "Start Strategy"
+                    size_hint_x: 0.3
+                    on_release: root.start_strategy()
+
+                MDRaisedButton:
+                    id: stop_strategy_button
+                    text: "Stop Strategy"
+                    size_hint_x: 0.3
+                    on_release: root.stop_strategy()
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: dp(60)
+                spacing: dp(10)
+
+                MDTextField:
+                    id: day_profit_target
+                    hint_text: "Day Profit Target"
+                    input_filter: "float"
+                    size_hint_x: 0.5
+
+                MDTextField:
+                    id: day_max_loss
+                    hint_text: "Day Maximum Loss"
+                    helper_text: "Enter a positive value"
+                    helper_text_mode: "on_focus"
+                    input_filter: "float"
+                    size_hint_x: 0.5
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                spacing: dp(5)
+                padding: dp(5)
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDLabel:
+                    text: "Active Strategies"
+                    halign: "left"
+                    height: self.texture_size[1]
+                    font_size: '16sp'
+
+                MDLabel:
+                    id: strategy_pnl
+                    text: "Total Profit: "
+                    halign: "right"
+                    height: self.texture_size[1]
+                    font_size: '16sp'
+
+            ScrollView:
+                size_hint_y: None
+                height: root.height * 0.4  # 40% of the screen height
+
+                MDBoxLayout:
+                    id: strategy_table_container
+                    size_hint_y: None
+        #            height: dp(300)  # Adjust as needed
+                    height: self.minimum_height
+
+            MDLabel:
+                id: strategy_status
+                text: "Strategy Status: Idle"
+                size_hint_y: None
+                height: dp(30)
 
             MDRaisedButton:
-                id: start_strategy_button
-                text: "Start Strategy"
+                text: "Stop All"
                 size_hint_x: 0.3
-                on_release: root.start_strategy()
-
-            MDRaisedButton:
-                id: stop_strategy_button
-                text: "Stop Strategy"
-                size_hint_x: 0.3
-                on_release: root.stop_strategy()
-
-        MDLabel:
-            text: "Active Strategies"
-            font_style: 'H6'
-            size_hint_y: None
-            height: dp(40)
-
-        MDBoxLayout:
-            id: strategy_table_container
-            size_hint_y: None
-            height: dp(300)  # Adjust as needed
-
-        MDLabel:
-            id: strategy_status
-            text: "Strategy Status: Idle"
-            size_hint_y: None
-            height: dp(30)
-
-        MDRaisedButton:
-            text: "Stop All"
-            size_hint_x: 0.3
-            pos_hint: {'center_x': 0.5}
-            on_release: root.stop_all_strategies()
-
+                pos_hint: {'center_x': 0.5}
+                on_release: root.stop_all_strategies()
 
 
 
@@ -1303,7 +1381,6 @@
                             size_hint_y: None
                             height: self.texture_size[1]
                             font_size: '16sp'
-#                        MDFloatingActionButton:
                         MDIconButton:
                             icon: "refresh"
                             md_bg_color: app.theme_cls.primary_color
@@ -1334,96 +1411,136 @@
 
 <FlatTradeStrategyScreen>:
 
-    MDBoxLayout:
-        orientation: 'vertical'
-        spacing: dp(5)
-        padding: dp(5)
-
-        MDLabel:
-            id: connection_status
-            text: "Not connected to strategy server"
-            size_hint_y: None
-            height: dp(30)
-
-        MDGridLayout:
-            cols: 3
-            spacing: dp(10)
-            size_hint_y: None
-            height: dp(50)
-
-            MDRectangleFlatButton:
-                id: index_button
-                text: "Select Index"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_index_menu(self)
-
-            MDRectangleFlatButton:
-                id: timeframe_button
-                text: "Select Timeframe"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_timeframe_menu(self)
-
-            MDRectangleFlatButton:
-                id: strategy_button
-                text: "Select Strategy"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_strategy_menu(self)
-
+    ScrollView:
         MDBoxLayout:
-            orientation: 'horizontal'
-            size_hint_y: None
-            height: dp(50)
-            spacing: dp(10)
+            orientation: 'vertical'
+            spacing: dp(5)
+            padding: dp(5)
 
-            MDTextField:
-                id: fund
-                hint_text: "Fund for Strategy"
-                input_filter: "float"
-                size_hint_x: 0.4
+            MDLabel:
+                id: connection_status
+                text: "Not connected to strategy server"
+                size_hint_y: None
+                height: dp(30)
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(10)
+                size_hint_y: None
+                height: dp(60)
+
+                MDRectangleFlatButton:
+                    id: index_button
+                    text: "Select Index"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_index_menu(self)
+
+                MDRectangleFlatButton:
+                    id: timeframe_button
+                    text: "Select Timeframe"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_timeframe_menu(self)
+
+                MDRectangleFlatButton:
+                    id: strategy_button
+                    text: "Select Strategy"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_strategy_menu(self)
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: dp(60)
+                spacing: dp(10)
+
+                MDTextField:
+                    id: fund
+                    hint_text: "Fund for Strategy"
+                    input_filter: "float"
+                    size_hint_x: 0.4
+
+                MDRaisedButton:
+                    id: start_strategy_button
+                    text: "Start Strategy"
+                    size_hint_x: 0.3
+                    on_release: root.start_strategy()
+
+                MDRaisedButton:
+                    id: stop_strategy_button
+                    text: "Stop Strategy"
+                    size_hint_x: 0.3
+                    on_release: root.stop_strategy()
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: dp(60)
+                spacing: dp(10)
+
+                MDTextField:
+                    id: day_profit_target
+                    hint_text: "Day Profit Target"
+                    input_filter: "float"
+                    size_hint_x: 0.5
+
+                MDTextField:
+                    id: day_max_loss
+                    hint_text: "Day Maximum Loss"
+                    helper_text: "Enter a positive value"
+                    helper_text_mode: "on_focus"
+                    input_filter: "float"
+                    size_hint_x: 0.5
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                spacing: dp(5)
+                padding: dp(5)
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDLabel:
+                    text: "Active Strategies"
+                    halign: "left"
+                    height: self.texture_size[1]
+                    font_size: '16sp'
+
+                MDLabel:
+                    id: strategy_pnl
+                    text: "Total Profit: "
+                    halign: "right"
+                    height: self.texture_size[1]
+                    font_size: '16sp'
+
+            ScrollView:
+                size_hint_y: None
+                height: root.height * 0.4  # 40% of the screen height
+
+                MDBoxLayout:
+                    id: strategy_table_container
+                    size_hint_y: None
+        #            height: dp(300)  # Adjust as needed
+                    height: self.minimum_height
+
+            MDLabel:
+                id: strategy_status
+                text: "Strategy Status: Idle"
+                size_hint_y: None
+                height: dp(30)
 
             MDRaisedButton:
-                id: start_strategy_button
-                text: "Start Strategy"
+                text: "Stop All"
                 size_hint_x: 0.3
-                on_release: root.start_strategy()
-
-            MDRaisedButton:
-                id: stop_strategy_button
-                text: "Stop Strategy"
-                size_hint_x: 0.3
-                on_release: root.stop_strategy()
-
-        MDLabel:
-            text: "Active Strategies"
-            font_style: 'H6'
-            size_hint_y: None
-            height: dp(40)
-
-        MDBoxLayout:
-            id: strategy_table_container
-            size_hint_y: None
-            height: dp(300)  # Adjust as needed
-
-        MDLabel:
-            id: strategy_status
-            text: "Strategy Status: Idle"
-            size_hint_y: None
-            height: dp(30)
-
-        MDRaisedButton:
-            text: "Stop All"
-            size_hint_x: 0.3
-            pos_hint: {'center_x': 0.5}
-            on_release: root.stop_all_strategies()
+                pos_hint: {'center_x': 0.5}
+                on_release: root.stop_all_strategies()
 
 
 
@@ -1796,95 +1913,135 @@
 
 <KotakStrategyScreen>:
 
-    MDBoxLayout:
-        orientation: 'vertical'
-        spacing: dp(5)
-        padding: dp(5)
-
-        MDLabel:
-            id: connection_status
-            text: "Not connected to strategy server"
-            size_hint_y: None
-            height: dp(30)
-
-        MDGridLayout:
-            cols: 3
-            spacing: dp(10)
-            size_hint_y: None
-            height: dp(50)
-
-            MDRectangleFlatButton:
-                id: index_button
-                text: "Select Index"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_index_menu(self)
-
-            MDRectangleFlatButton:
-                id: timeframe_button
-                text: "Select Timeframe"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_timeframe_menu(self)
-
-            MDRectangleFlatButton:
-                id: strategy_button
-                text: "Select Strategy"
-                size_hint_x: 1
-                theme_text_color: "Custom"
-                text_color: "white"
-                line_color: "red"
-                on_release: root.show_strategy_menu(self)
-
+    ScrollView:
         MDBoxLayout:
-            orientation: 'horizontal'
-            size_hint_y: None
-            height: dp(50)
-            spacing: dp(10)
+            orientation: 'vertical'
+            spacing: dp(5)
+            padding: dp(5)
 
-            MDTextField:
-                id: fund
-                hint_text: "Fund for Strategy"
-                input_filter: "float"
-                size_hint_x: 0.4
+            MDLabel:
+                id: connection_status
+                text: "Not connected to strategy server"
+                size_hint_y: None
+                height: dp(30)
+
+            MDGridLayout:
+                cols: 3
+                spacing: dp(10)
+                size_hint_y: None
+                height: dp(60)
+
+                MDRectangleFlatButton:
+                    id: index_button
+                    text: "Select Index"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_index_menu(self)
+
+                MDRectangleFlatButton:
+                    id: timeframe_button
+                    text: "Select Timeframe"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_timeframe_menu(self)
+
+                MDRectangleFlatButton:
+                    id: strategy_button
+                    text: "Select Strategy"
+                    size_hint_x: 1
+                    theme_text_color: "Custom"
+                    text_color: "white"
+                    line_color: "red"
+                    on_release: root.show_strategy_menu(self)
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: dp(60)
+                spacing: dp(10)
+
+                MDTextField:
+                    id: fund
+                    hint_text: "Fund for Strategy"
+                    input_filter: "float"
+                    size_hint_x: 0.4
+
+                MDRaisedButton:
+                    id: start_strategy_button
+                    text: "Start Strategy"
+                    size_hint_x: 0.3
+                    on_release: root.start_strategy()
+
+                MDRaisedButton:
+                    id: stop_strategy_button
+                    text: "Stop Strategy"
+                    size_hint_x: 0.3
+                    on_release: root.stop_strategy()
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: dp(60)
+                spacing: dp(10)
+
+                MDTextField:
+                    id: day_profit_target
+                    hint_text: "Day Profit Target"
+                    input_filter: "float"
+                    size_hint_x: 0.5
+
+                MDTextField:
+                    id: day_max_loss
+                    hint_text: "Day Maximum Loss"
+                    helper_text: "Enter a positive value"
+                    helper_text_mode: "on_focus"
+                    input_filter: "float"
+                    size_hint_x: 0.5
+
+            MDBoxLayout:
+                orientation: 'horizontal'
+                spacing: dp(5)
+                padding: dp(5)
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDLabel:
+                    text: "Active Strategies"
+                    halign: "left"
+                    height: self.texture_size[1]
+                    font_size: '16sp'
+
+                MDLabel:
+                    id: strategy_pnl
+                    text: "Total Profit: "
+                    halign: "right"
+                    height: self.texture_size[1]
+                    font_size: '16sp'
+
+            ScrollView:
+                size_hint_y: None
+                height: root.height * 0.4  # 40% of the screen height
+
+                MDBoxLayout:
+                    id: strategy_table_container
+                    size_hint_y: None
+        #            height: dp(300)  # Adjust as needed
+                    height: self.minimum_height
+
+            MDLabel:
+                id: strategy_status
+                text: "Strategy Status: Idle"
+                size_hint_y: None
+                height: dp(30)
 
             MDRaisedButton:
-                id: start_strategy_button
-                text: "Start Strategy"
+                text: "Stop All"
                 size_hint_x: 0.3
-                on_release: root.start_strategy()
-
-            MDRaisedButton:
-                id: stop_strategy_button
-                text: "Stop Strategy"
-                size_hint_x: 0.3
-                on_release: root.stop_strategy()
-
-        MDLabel:
-            text: "Active Strategies"
-            font_style: 'H6'
-            size_hint_y: None
-            height: dp(40)
-
-        MDBoxLayout:
-            id: strategy_table_container
-            size_hint_y: None
-            height: dp(300)  # Adjust as needed
-
-        MDLabel:
-            id: strategy_status
-            text: "Strategy Status: Idle"
-            size_hint_y: None
-            height: dp(30)
-
-        MDRaisedButton:
-            text: "Stop All"
-            size_hint_x: 0.3
-            pos_hint: {'center_x': 0.5}
-            on_release: root.stop_all_strategies()
+                pos_hint: {'center_x': 0.5}
+                on_release: root.stop_all_strategies()
 
 
